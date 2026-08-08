@@ -8,70 +8,115 @@ from telegram import (
 from telegram.ext import ContextTypes
 
 
-# ==============================
+# ==========================================
 # BANNER
-# ==============================
+# ==========================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 BANNER_PATH = BASE_DIR / "banner.jpg"
 
 
-# ==============================
+# ==========================================
 # /START
-# ==============================
+# ==========================================
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
 
     user = update.effective_user
     first_name = user.first_name or "Bạn"
 
+    # ======================================
+    # MENU
+    # callback_data phải khớp buttons.py
+    # ======================================
+
     keyboard = [
         [
             InlineKeyboardButton(
-                "🎮 LIÊN QUÂN",
-                callback_data="lienquan"
+                "⚔️ LIÊN QUÂN",
+                callback_data="product_lq"
             ),
             InlineKeyboardButton(
                 "🔥 FREE FIRE",
-                callback_data="freefire"
+                callback_data="product_ff"
             ),
         ],
+
         [
             InlineKeyboardButton(
                 "💳 NẠP TIỀN",
                 callback_data="deposit"
             ),
         ],
+
         [
             InlineKeyboardButton(
-                "📞 LIÊN HỆ ADMIN",
-                callback_data="contact"
+                "🛒 CỬA HÀNG",
+                callback_data="shop"
+            ),
+            InlineKeyboardButton(
+                "☎️ HỖ TRỢ",
+                callback_data="support"
+            ),
+        ],
+
+        [
+            InlineKeyboardButton(
+                "👤 TÀI KHOẢN",
+                callback_data="account"
+            ),
+            InlineKeyboardButton(
+                "📜 LỊCH SỬ",
+                callback_data="history"
+            ),
+        ],
+
+        [
+            InlineKeyboardButton(
+                "📥 TẢI FILE",
+                callback_data="download"
             ),
         ],
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
+    # ======================================
+    # NỘI DUNG
+    # ======================================
+
     caption = f"""
-🌸 <b>HCUONGIOS SIÊU VIP</b> 🌸
+🌸 <b>HCUONGIOS PREMIUM</b> 🌸
 
 👋 Xin chào <b>{first_name}</b>!
 
-💎 Chào mừng bạn đến với hệ thống.
+💎 Chào mừng bạn đến với hệ thống
+<b>HCUONGIOS PREMIUM</b>
 
 ━━━━━━━━━━━━━━━━━━
-🎮 <b>LIÊN QUÂN MOBILE</b>
-🔥 <b>FREE FIRE</b>
-💳 <b>NẠP TIỀN</b>
-📞 <b>HỖ TRỢ ADMIN</b>
+
+🎮 Liên Quân Mobile
+🔥 Free Fire
+🛒 Cửa hàng
+💳 Nạp tiền
+🔑 Quản lý KEY
+📥 Tải file
+
 ━━━━━━━━━━━━━━━━━━
 
-⚡ Nhanh chóng
-🔐 Uy tín
-💰 Giá tốt
+⚡ <b>Giao hàng nhanh</b>
+🔐 <b>Uy tín</b>
+💰 <b>Giá tốt</b>
 
-👇 <b>CHỌN CHỨC NĂNG BÊN DƯỚI</b>
+👇 <b>CHỌN CHỨC NĂNG</b>
 """
+
+    # ======================================
+    # GỬI BANNER
+    # ======================================
 
     try:
 
@@ -88,20 +133,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         else:
 
-            print(f"⚠️ Không tìm thấy banner: {BANNER_PATH}")
+            print(
+                f"⚠️ Không tìm thấy banner: {BANNER_PATH}"
+            )
 
             await update.message.reply_text(
-                caption,
+                text=caption,
                 parse_mode="HTML",
                 reply_markup=reply_markup,
             )
 
     except Exception as e:
 
-        print(f"❌ START ERROR: {repr(e)}")
+        print(
+            f"❌ START ERROR: {repr(e)}"
+        )
 
         await update.message.reply_text(
-            caption,
+            text=caption,
             parse_mode="HTML",
             reply_markup=reply_markup,
         )
