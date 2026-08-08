@@ -1,44 +1,124 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ContextTypes
 from pathlib import Path
+
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+from telegram.ext import ContextTypes
+
+
+# =========================================================
+# ĐƯỜNG DẪN PROJECT
+# =========================================================
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# File banner phải nằm tại:
+# src/banner.jpg
+BANNER_PATH = BASE_DIR / "banner.jpg"
+
+
+# =========================================================
+# /START
+# =========================================================
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    user = update.effective_user
+
+    # Tên người dùng
+    first_name = user.first_name or "bạn"
+
+    # =====================================================
+    # MENU
+    # =====================================================
+
     keyboard = [
         [
-            InlineKeyboardButton("💳 Nạp tiền", callback_data="deposit"),
-            InlineKeyboardButton("🛒 Mua KEY", callback_data="buy_key")
+            InlineKeyboardButton(
+                "🎮 LIÊN QUÂN",
+                callback_data="lienquan"
+            ),
+            InlineKeyboardButton(
+                "🔥 FREE FIRE",
+                callback_data="freefire"
+            ),
         ],
         [
-            InlineKeyboardButton("📥 Tải file", callback_data="download"),
-            InlineKeyboardButton("👑 VIP STORE", callback_data="vip_store")
+            InlineKeyboardButton(
+                "💳 NẠP TIỀN",
+                callback_data="deposit"
+            ),
         ],
         [
-            InlineKeyboardButton("☎️ Liên hệ", callback_data="contact")
-        ]
+            InlineKeyboardButton(
+                "📞 LIÊN HỆ ADMIN",
+                callback_data="contact"
+            ),
+        ],
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    caption = """
-👑 <b>HCUONGIOS VIP STORE</b>
+    # =====================================================
+    # NỘI DUNG START
+    # =====================================================
 
-🔥 Shop dịch vụ iOS Gaming Premium
+    caption = f"""
+🌸 <b>HCUONGIOS SIÊU VIP</b> 🌸
 
-🍎 iOS
+👋 Xin chào <b>{first_name}</b>!
+
+💎 Chào mừng bạn đến với hệ thống HCUONGIOS.
+
+🎮 <b>DỊCH VỤ</b>
+━━━━━━━━━━━━━━━━━━
+🎮 Liên Quân Mobile
+🔥 Free Fire
 💳 Nạp tiền tự động
-🛒 Mua KEY
-📥 Tải file
+📞 Hỗ trợ khách hàng
+━━━━━━━━━━━━━━━━━━
 
-🟢 <b>ONLINE 24/7</b>
+⚡ <b>Hệ thống hoạt động tự động</b>
+🔐 Nhanh chóng • Uy tín • An toàn
 
-Chọn chức năng bên dưới 👇
+👇 <b>Vui lòng chọn chức năng:</b>
 """
 
-    with open("banner.jpg", "rb") as photo:
-        await update.message.reply_photo(
-            photo=photo,
-            caption=caption,
+    # =====================================================
+    # GỬI BANNER
+    # =====================================================
+
+    try:
+
+        if BANNER_PATH.exists():
+
+            with open(BANNER_PATH, "rb") as photo:
+
+                await update.message.reply_photo(
+                    photo=photo,
+                    caption=caption,
+                    parse_mode="HTML",
+                    reply_markup=reply_markup,
+                )
+
+        else:
+
+            # Không có banner thì vẫn cho bot chạy
+            await update.message.reply_text(
+                caption,
+                parse_mode="HTML",
+                reply_markup=reply_markup,
+            )
+
+    except Exception as e:
+
+        print(f"[START ERROR] {e}")
+
+        # Nếu gửi ảnh lỗi thì gửi dạng text
+        await update.message.reply_text(
+            caption,
             parse_mode="HTML",
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
         )
