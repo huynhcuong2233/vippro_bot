@@ -1,0 +1,1 @@
+Set BOT_TOKEN env var and deploy.
